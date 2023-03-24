@@ -46,7 +46,7 @@ jobs:
             IMAGE_TAG: ${{ github.sha }}
           run: |
             docker build -t $ECR_REGISTRY/$ECR_REPO:$IMAGE_TAG --build-arg NODE_ENV=production .
-            docker push $ECR_REGISTRY/$$ECR_REPO:$IMAGE_TAG
+            docker push $ECR_REGISTRY/$ECR_REPO:$IMAGE_TAG
             echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPO:$IMAGE_TAG"
         
         - name: Download Task Definition
