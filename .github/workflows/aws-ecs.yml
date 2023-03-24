@@ -51,7 +51,7 @@ jobs:
         
         - name: Download Task Definition
           run: |
-            aws ecs describe-task-defination --task-definition $ECS_ID --query taskDefinition > task-definition.json
+            aws ecs describe-task-definition --task-definition $ECS_ID --query taskDefinition > task-definition.json
 
         - name: Fill Image ID in the ECS Client Task Definition
           id: task-def
