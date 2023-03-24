@@ -1,0 +1,75 @@
+name: Deploy to AWS ECS Fargate
+
+on :
+    push:
+        branches:
+            - main
+
+env:
+    AWS_REGION: us-east-1
+    CONTAINER_NAME: express-app
+    ECR_REGISTRY: public.ecr.aws/e7u6v3p1
+    ECR_REPO: pearlthrough-ecr
+    ECS_CLUSTER: express-app-cluster
+    ECS_TD: express-app
+    ECS_SV: express-app-service
+
+jobs:
+  deploy:
+    name: Deploy
+    runs-on: ubuntu-latest
+    environment: production
+
+    steps:
+        - name: Checkout
+          uses: actions/checkout@v2
+
+        - name: AWS Credentials
+          uses: aws-actions/configure-aws-credentials@v1
+          with:
+            aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+            aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+            aws-region: ${{ env.AWS_REGION }}
+        
+        - name: Login to AWS ECR
+          id: login-ecr
+          uses: aws-actions/amazon-ecr-login@v1
+
+        - name: Build, Tag and Push Image to ECR
+          id: build-image
+          env:
+            ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+            IMAGE_TAG: ${{ github.sha }}
+          run: |
+            docker build -t $ECR_REGISTRY/$ECR_REPO:$IMAGE_TAG --build-arg NODE_ENV=production
+            docker push $ECR_REGISTRY/$$ECR_REPO:$IMAGE_TAG
+            echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPO:$IMAGE_TAG"
+        
+        - name: Download Task Definition
+          run: |
+            aws ecs describe-task-defination --task-definition $ECS_ID --query taskDefinition > task-definition.json
+
+        - name: Fill Image ID in the ECS Client Task Definition
+          id: task-def
+          with:
+            task-definition: ./task-definition.json
+            container-name: ${{ env.CONTAINER_NAME }}
+            image: ${{ steps.build-image.outputs.image }}
+        
+        - name: Deploy ECS Task Definition
+          uses: aws-actions/amazon-ecs-deploy-task-definition@v1
+          with:
+            task-definition: ${{ steps.task-def.outputs.task-definition }}
+            service: ${{ env.ECS_SV }}
+            cluster: ${{ env.ECS_CLUSTER }}
+            wait-for-service-stability: flase
+
+
+
+
+        
+
+
+
+
+
