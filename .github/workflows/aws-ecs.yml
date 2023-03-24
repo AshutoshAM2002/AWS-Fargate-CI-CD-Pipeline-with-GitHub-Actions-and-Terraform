@@ -1,9 +1,9 @@
 name: Deploy to AWS ECS Fargate
 
-on :
-    push:
-        branches:
-            - main
+on:
+  push:
+    branches:
+      - main
 
 env:
     AWS_REGION: us-east-1
@@ -14,6 +14,10 @@ env:
     ECS_TD: express-app
     ECS_SV: express-app-service
 
+defaults:
+  run:
+    shell: bash
+    
 jobs:
   deploy:
     name: Deploy
