@@ -11,7 +11,7 @@ env:
     ECR_REGISTRY: 895767799518.dkr.ecr.us-east-1.amazonaws.com
     ECR_REPO: pearlthrough-ecr
     ECS_CLUSTER: express-app-cluster
-    ECS_TD: express-app
+    ECS_ID: express-app
     ECS_SV: express-app-service
 
 defaults:
