@@ -1,3 +1,3 @@
-resource "aws_ecrpublic_repository" "ecr_repo" {
-  repository_name = "pearlthrough-ecr"
+resource "aws_ecr_repository" "ecr_repo" {
+  name = "pearlthrough-ecr"
 }
