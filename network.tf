@@ -44,7 +44,7 @@ resource "aws_route_table" "private" {
   vpc_id = aws_vpc.default.id
 
   route {
-    cidr_block = "0.0.0.0/0"
+    cidr_block     = "0.0.0.0/0"
     nat_gateway_id = element(aws_nat_gateway.gateway.*.id, count.index)
   }
 }
@@ -56,8 +56,8 @@ resource "aws_route_table_association" "private" {
 }
 
 resource "aws_security_group" "lb" {
-  name        = "express-alb-security-group"
-  vpc_id      = aws_vpc.default.id
+  name   = "express-alb-security-group"
+  vpc_id = aws_vpc.default.id
 
   ingress {
     protocol    = "tcp"
@@ -67,16 +67,16 @@ resource "aws_security_group" "lb" {
   }
 
   egress {
-    from_port = 0
-    to_port   = 0
-    protocol  = "-1"
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
     cidr_blocks = ["0.0.0.0/0"]
   }
 }
 
 resource "aws_security_group" "express_app_sg" {
-  name        = "express_app_sg"
-  vpc_id      = aws_vpc.default.id
+  name   = "express_app_sg"
+  vpc_id = aws_vpc.default.id
 
   ingress {
     protocol        = "tcp"
