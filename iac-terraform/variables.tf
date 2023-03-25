@@ -1,4 +1,4 @@
 variable "app_count" {
-  type    = number
+  type = number
   default = 1
 }

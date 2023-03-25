@@ -43,10 +43,10 @@ jobs:
           id: build-image
           env:
             ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-#            IMAGE_TAG: {{ github.sha }}
+            IMAGE_TAG: ${{ github.sha }}
           run: |
-            docker build -t $ECR_REGISTRY/$ECR_REPO:latest --build-arg NODE_ENV=production .
-            docker push $ECR_REGISTRY/$ECR_REPO:latest
+            docker build -t $ECR_REGISTRY/$ECR_REPO:$IMAGE_TAG --build-arg NODE_ENV=production .
+            docker push $ECR_REGISTRY/$ECR_REPO:$IMAGE_TAG
             echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPO:latest"
 
         - name: Setup Terraform
@@ -64,25 +64,25 @@ jobs:
           if: github.ref == 'refs/heads/main' && github.event_name == 'push'
           run: terraform apply -auto-approve -input=false
         
-#        - name: Download Task Definition
-#          run: |
-#            aws ecs describe-task-definition --task-definition $ECS_ID --query taskDefinition > task-definition.json
-#
-#        - name: Fill Image ID in the ECS Client Task Definition
-#          id: task-def
-#          uses: aws-actions/amazon-ecs-render-task-definition@v1
-#          with:
-#            task-definition: ./task-definition.json
-#            container-name: {{ env.CONTAINER_NAME }}
-#            image: {{ steps.build-image.outputs.image }}
-#        
-#        - name: Deploy ECS Task Definition
-#          uses: aws-actions/amazon-ecs-deploy-task-definition@v1
-#          with:
-#            task-definition: {{ steps.task-def.outputs.task-definition }}
-#            service: {{ env.ECS_SV }}
-#            cluster: {{ env.ECS_CLUSTER }}
-#            wait-for-service-stability: flase
+        - name: Download Task Definition
+          run: |
+            aws ecs describe-task-definition --task-definition $ECS_ID --query taskDefinition > task-definition.json
+
+        - name: Fill Image ID in the ECS Client Task Definition
+          id: task-def
+          uses: aws-actions/amazon-ecs-render-task-definition@v1
+          with:
+            task-definition: ./task-definition.json
+            container-name: ${{ env.CONTAINER_NAME }}
+            image: ${{ steps.build-image.outputs.image }}
+        
+        - name: Deploy ECS Task Definition
+          uses: aws-actions/amazon-ecs-deploy-task-definition@v1
+          with:
+            task-definition: ${{ steps.task-def.outputs.task-definition }}
+            service: ${{ env.ECS_SV }}
+            cluster: ${{ env.ECS_CLUSTER }}
+            wait-for-service-stability: flase
 
 
 
