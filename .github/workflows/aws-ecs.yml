@@ -38,7 +38,7 @@ jobs:
         - name: Login to AWS ECR
           id: login-ecr
           uses: aws-actions/amazon-ecr-login@v1
-        
+
         - name: Build, Tag and Push Image to ECR
           id: build-image
           env:
@@ -47,22 +47,7 @@ jobs:
           run: |
             docker build -t $ECR_REGISTRY/$ECR_REPO:$IMAGE_TAG --build-arg NODE_ENV=production .
             docker push $ECR_REGISTRY/$ECR_REPO:$IMAGE_TAG
-            echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPO:latest"
-
-        - name: Setup Terraform
-          uses: hashicorp/setup-terraform@v1
-          with:
-            terraform_version: 1.4.2
-        
-        - name: Terraform init
-          run: terraform init
-
-        - name: Terraform plan
-          run: terraform plan -no-color -input=false
-
-        - name: Terraform apply
-          if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-          run: terraform apply -auto-approve -input=false
+            echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPO:$IMAGE_TAG"
         
         - name: Download Task Definition
           run: |
