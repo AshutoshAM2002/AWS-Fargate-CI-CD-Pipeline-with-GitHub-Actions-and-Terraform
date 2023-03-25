@@ -57,14 +57,14 @@ jobs:
         - name: Terraform init
           run: terraform init
 
-#        - name: Terraform plan
-#          run: terraform plan -no-color -input=false
-#
-#        - name: Terraform apply
-#          run: terraform apply -auto-approve -input=false
+        - name: Terraform plan
+          run: terraform plan -no-color -input=false
 
-        - name: Terraform destroy
-          run: terraform destroy -auto-approve
+        - name: Terraform apply
+          run: terraform apply -auto-approve -input=false
+
+#        - name: Terraform destroy
+#          run: terraform apply -auto-approve
         
 #        - name: Download Task Definition
 #          run: |
